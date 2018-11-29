@@ -1,0 +1,6 @@
+name: signup with satellite services
+redhat_subscription:
+force_register: True
+activationkey: "{{satellite_subscription_key}}"
+org_id: "{{satellite_org}}"
+''''

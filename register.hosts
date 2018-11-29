@@ -1,0 +1,57 @@
+---
+- hosts: accirustech.com
+# become: yes
+# become_method: sudo
+  tasks:
+
+    - name: install subscription-manager
+      yum:
+        name: subscription-manager
+        state: latest
+
+    - name: download and  install katello-ca-consumer-latest.noarch.rpm
+      yum:
+        name: http://172.16.3.6/pub/katello-ca-consumer-katello.example.com-1.0-1.noarch.rpm
+        state: present
+
+   -  name: Register hosts to katello with activationkey
+      redhat_subscription:
+      force_register: True
+      activationkey: Operations_Non_Prod
+      org_id: acirrustech
+
+#    - name: Register hosts to katello with activationkey
+#      command: subscription-manager register --org="acirrustech" --activationkey="Operations_Non_Prod"
+
+
+
+    - name: list of enabled repositories.
+      command: subscription-manager repos --list
+
+    - name: install katello-agent packages.
+      yum:
+        name: http://fedorapeople.org/groups/katello/releases/yum/3.8/client/el7/x86_64/katello-client-repos-latest.rpm
+        state: present
+
+    - name: install epel-release package for katello-agent
+      yum:
+        name:   https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+        state: latest
+
+    - name: install katello-agent
+      yum:
+        name:  katello-agent
+        state: latest
+
+    - name: install katello-host-tools
+      yum:
+        name:  katello-host-tools
+        state: latest
+
+
+    - name: start goferd.service
+      command: systemctl start goferd.service
+
+    - name: enable  goferd.service
+      command: systemctl enable  goferd.service
+
